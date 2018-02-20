@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 import { CoreModule } from './core/core.module';
 import { TasksModule } from './tasks/tasks.module';
@@ -12,7 +14,8 @@ import { SharedModule } from './shared/shared.module';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
-import { EffectsModule } from '@ngrx/effects';
+import { RouterStateSerializerProvider, routerReducers } from './+store';
+
 
 
 
@@ -36,7 +39,8 @@ import { MyInterceptor } from './core/interceptors/my.interceptor';
     TasksModule,
     CoreModule,
     SharedModule,
-    StoreModule.forRoot({}),
+    StoreModule.forRoot(routerReducers),
+    StoreRouterConnectingModule.forRoot(),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     AppRoutingModule
@@ -49,7 +53,8 @@ import { MyInterceptor } from './core/interceptors/my.interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: MyInterceptor,
       multi: true,
-    }
+    },
+    RouterStateSerializerProvider
   ],
   bootstrap: [AppComponent]
 })

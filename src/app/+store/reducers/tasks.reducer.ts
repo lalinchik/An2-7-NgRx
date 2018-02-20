@@ -1,6 +1,6 @@
-import { TasksActionTypes, TasksActions } from './../actions';
-import { TasksState, initialTasksState } from './../state/tasks.state';
-import { Task } from './../../tasks/models/task.model';
+import { TasksActionTypes, TasksActions } from '../actions';
+import { TasksState, initialTasksState } from '../state/tasks.state';
+import { Task } from '../../tasks/models/task.model';
 
 export function tasksReducer(
   state = initialTasksState,
@@ -54,22 +54,101 @@ export function tasksReducer(
       return {...state};
     }
 
-    case TasksActionTypes.DONE_TASK: {
-      console.log('DONE_TASK action being handled!');
+    case TasksActionTypes.GET_TASK: {
+      console.log('GET_TASK action being handled!');
+      return {
+        ...state,
+        loading: true
+      };
+    }
 
-      const id = (<Task>action.payload).id;
-      const data = state.data.map(task => {
-        if (task.id === id) {
-          return {...action.payload, done: true};
-        }
+    case TasksActionTypes.GET_TASK_SUCCESS: {
+      console.log('GET_TASK_SUCCESS action being handled!');
+      const selectedTask = { ...<Task>action.payload };
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        selectedTask
+      };
+    }
 
-        return task;
-      });
+    case TasksActionTypes.GET_TASK_ERROR: {
+      console.log('GET_TASK_ERROR action being handled!');
+      const error = action.payload;
+      return {
+        ...state,
+        loading: false,
+        loaded: false,
+        error
+      };
+    }
+
+    case TasksActionTypes.UPDATE_TASK_SUCCESS: {
+      console.log('UPDATE_TASK_SUCCESS action being handled!');
+      const task = { ...<Task>action.payload };
+      const data = [...state.data];
+      const index = data.findIndex(t => t.id === task.id);
+
+      data[index] = task;
 
       return {
         ...state,
-        data,
-        error: null
+        data
+      };
+    }
+
+    case TasksActionTypes.UPDATE_TASK_ERROR: {
+      console.log('UPDATE_TASK_ERROR action being handled!');
+      const error = action.payload;
+      return {
+        ...state,
+        error
+      };
+    }
+
+    case TasksActionTypes.CREATE_TASK_SUCCESS: {
+      console.log('CREATE_TASK_SUCCESS action being handled!');
+      const task = { ...<Task>action.payload };
+      const data = [...state.data];
+
+      data.push(task);
+
+      return {
+        ...state,
+        data
+      };
+    }
+
+    case TasksActionTypes.CREATE_TASK_ERROR: {
+      console.log('CREATE_TASK_ERROR action being handled!');
+      const error = action.payload;
+      return {
+        ...state,
+        error
+      };
+    }
+
+    case TasksActionTypes.DELETE_TASK_SUCCESS: {
+      console.log('DELETE_TASK_SUCCESS action being handled!');
+      const task = { ...<Task>action.payload };
+      const data = [...state.data];
+      const index = data.findIndex(t => t.id === task.id);
+
+      data.splice(index, 1);
+
+      return {
+        ...state,
+        data
+      };
+    }
+
+    case TasksActionTypes.DELETE_TASK_ERROR: {
+      console.log('DELETE_TASK_ERROR action being handled!');
+      const error = action.payload;
+      return {
+        ...state,
+        error
       };
     }
 
